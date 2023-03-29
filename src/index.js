@@ -1,3 +1,4 @@
+let productAcend = true;
 let productCards = JSON.parse(localStorage.getItem('productCards')) || [];
 let image = ""
 document.getElementById("createNewModalPImg").addEventListener('change', (event) => {
@@ -23,7 +24,7 @@ function randomIntFromInterval(min, max) { // min and max included
 }
 
 document.getElementById("createNewModalBtn").addEventListener("click", () => {
-    let uid = randomIntFromInterval(100000, 999999)
+    let uid = randomIntFromInterval(10000000000, 99999999999)
     document.getElementById("createNewModalPID").value = uid;
 })
 
@@ -36,24 +37,33 @@ createNewProductForm.addEventListener("submit", (e) => {
     let price = document.getElementById("createNewModalPPrice").value;
     let description = document.getElementById("createNewModalPDes").value;
 
+    if (productName.replace(/^\s+|\s+$/gm, '').length == 0 || description.replace(/^\s+|\s+$/gm, '').length == 0) {
+        alert("fill correctly");
+        return;
+    }
+
     let newProduct = {
         _id, productName, image, price, description
     }
+
+    $("#createNewModal").modal('hide');
     productCards = JSON.parse(localStorage.getItem('productCards')) || [];
     productCards.push(newProduct)
     localStorage.setItem('productCards', JSON.stringify(productCards));
     productCards = JSON.parse(localStorage.getItem('productCards'))
     image = ""
 
-    let uid = randomIntFromInterval(100000, 999999)
+    let uid = randomIntFromInterval(10000000000, 99999999999)
     document.getElementById("createNewModalPID").value = uid;
+    console.log(uid);
     document.getElementById("createNewModalPID").value = "";
     document.getElementById("createNewModalPName").value = "";
     document.getElementById("createNewModalPPrice").value = "";
     document.getElementById("createNewModalPDes").value = "";
     document.getElementById("createNewModalPImg").value = "";
-
+    success()
     addHTMLToDisplayArea(productCards)
+
 });
 
 
@@ -65,6 +75,11 @@ editProductForm.addEventListener("submit", (e) => {
     let productName = document.getElementById("editCardModalPName").value;
     let price = document.getElementById("editCardModalPPrice").value;
     let description = document.getElementById("editCardModalPDes").value;
+
+    if (productName.replace(/^\s+|\s+$/gm, '').length == 0 || description.replace(/^\s+|\s+$/gm, '').length == 0) {
+        alert("fill correctly");
+        return;
+    }
 
     let editProduct = {
         _id, productName, image, price, description
@@ -83,7 +98,7 @@ editProductForm.addEventListener("submit", (e) => {
     localStorage.setItem('productCards', JSON.stringify(newProductCards));
     productCards = JSON.parse(localStorage.getItem('productCards'))
     image = ""
-
+    saveSuccess()
     addHTMLToDisplayArea(productCards)
 });
 
@@ -91,30 +106,33 @@ function addHTMLToDisplayArea(products) {
     let contentArea = document.getElementById("allCardsDisplay");
     contentArea.innerHTML = "";
     products.map((currentproduct) => {
+        if (currentproduct === undefined) {
+            return;
+        }
         contentArea.innerHTML += `
         <div class="col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3">
         <div class="card">
         <div class="card-image-box">
                             <img class="card-img"
-                            src="${currentproduct.image}"
+                            src="${currentproduct?.image}"
                                 alt="Vans">
                         </div>
 
             <div class="card-body">
-                <h4 class="card-title">${currentproduct.productName}</h4>
+                <h4 class="card-title">${currentproduct?.productName}</h4>
                 <h6 class="card-subtitle mb-2 text-muted">PID: ${currentproduct._id}</h6>
                 <p class="card-text">
-                ${currentproduct.description} </p>
+                ${currentproduct?.description} </p>
                 <div class="buy d-flex justify-content-between align-items-center">
                     <div class="price text-success">
-                        <h5>$${currentproduct.price}</h5>
+                        <h5>$${currentproduct?.price}</h5>
                     </div>
 
                 </div>
-                <div class="buy d-flex gap-3 align-items-center mt-3">
-                    <button type="button" class="btn btn-outline-primary">View more</button>
-                    <button type="button" id="cardEditBtn-${currentproduct._id}" data-bs-toggle="modal" data-bs-target="#editCardModal" class="btn btn-outline-success" onclick="handleCurrentEdit(${currentproduct._id})">Edit</button>
-                    <button type="button" class="btn btn-outline-danger" onclick="handleCurrentDelete(${currentproduct._id})">Delete</button>
+                <div class="buy d-flex gap-3 align-items-center mt-3 justify-content-center">
+                    <button type="button" class="btn btn-outline-primary text-nowrap" onclick="handleCurrentViewMore(${currentproduct?._id})">View more</button>
+                    <button type="button" id="cardEditBtn-${currentproduct?._id}" data-bs-toggle="modal" data-bs-target="#editCardModal" class="btn btn-outline-success" onclick="handleCurrentEdit(${currentproduct?._id})">Edit</button>
+                    <button type="button" class="btn btn-outline-danger" onclick="handleCurrentDelete(${currentproduct?._id})">Delete</button>
                 </div>
             </div>
         </div>
@@ -129,6 +147,7 @@ function handleCurrentEdit(currentproductID) {
     document.getElementById("editCardModalPPrice").value = currentProduct[0].price;
     document.getElementById("editCardModalPDes").value = currentProduct[0].description;
     document.getElementById("editCardModalPImg").value = "";
+    image = currentProduct[0].image;
 }
 
 function handleCurrentDelete(currentproductID) {
@@ -136,8 +155,120 @@ function handleCurrentDelete(currentproductID) {
 
     localStorage.setItem('productCards', JSON.stringify(currentProducts));
     productCards = JSON.parse(localStorage.getItem('productCards'))
-
+    deleteWarning();
     addHTMLToDisplayArea(productCards)
 }
+
+function handleCurrentViewMore(currentproductID) {
+    window.location.href = `./view.html?id=${currentproductID}`;
+}
+
+document.getElementById("sort-toggle-btn").addEventListener("click", () => {
+    productAcend = !productAcend;
+    if (!productAcend) {
+        document.getElementById("sort-toggle-btn").classList.add('dropdown-toggle-up');
+    }
+    else {
+        document.getElementById("sort-toggle-btn").classList.remove('dropdown-toggle-up');
+    }
+
+    if (!document.getElementById("sort-clear-btn").classList.contains('disabled')) {
+        handleSortBy(sortLabel);
+    }
+
+})
+
+document.getElementById("sort-clear-btn").addEventListener("click", () => {
+    document.getElementById("sort-clear-btn").classList.add("disabled");
+    productCards = JSON.parse(localStorage.getItem('productCards'))
+    addHTMLToDisplayArea(productCards)
+})
+let sortLabel;
+function handleSortBy(label) {
+    sortLabel = label;
+    document.getElementById("sort-clear-btn").classList.remove("disabled");
+    productCards.sort((a, b) => {
+        if (label === "productName") {
+            let x = a.productName.toLowerCase();
+            let y = b.productName.toLowerCase();
+            if (x < y) {
+                return -1;
+            }
+            if (x > y) {
+                return 1;
+            }
+            return 0;
+        }
+        else {
+            return a[label] - b[label]
+        }
+    })
+    if (!productAcend) {
+        productCards.reverse();
+    }
+    addHTMLToDisplayArea(productCards)
+}
+
+function handleSearchBar() {
+    let currentSearchValue = document.getElementById("searchbar").value;
+    let regex = new RegExp(currentSearchValue, "gi")
+    let filteredProductCards = productCards.map((currentCard) => {
+        if (currentCard.productName.match(regex) || currentCard._id.match(regex)) {
+            return currentCard;
+        }
+    })
+    addHTMLToDisplayArea(filteredProductCards)
+}
+
+function success() {
+    Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: 'Added successfully',
+        animation: false,
+        position: 'bottom-left',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+};
+
+function saveSuccess() {
+    Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: 'Save successfully',
+        animation: false,
+        position: 'bottom-left',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+};
+
+function deleteWarning() {
+    Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: 'Delete successfully',
+        animation: false,
+        position: 'bottom-left',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+};
 
 addHTMLToDisplayArea(productCards)
