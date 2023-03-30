@@ -151,19 +151,22 @@ function handleCurrentEdit(currentproductID) {
     image = currentProduct[0].image;
 }
 
-function handleCurrentDeleteModal(currentproductID) {
-    document.getElementById("deleteCardModalSubmit").addEventListener('click', () => {
-        let currentProducts = productCards.filter((currCard) => currCard._id != currentproductID)
+let selectedCardID;
+document.getElementById("deleteCardModalSubmit").addEventListener('click', () => {
+    let currentProducts = productCards.filter((currCard) => currCard._id != selectedCardID)
 
-        localStorage.setItem('productCards', JSON.stringify(currentProducts));
-        productCards = JSON.parse(localStorage.getItem('productCards'))
-        deleteWarning();
-        addHTMLToDisplayArea(productCards)
-    })
+    localStorage.setItem('productCards', JSON.stringify(currentProducts));
+    productCards = JSON.parse(localStorage.getItem('productCards'))
+    deleteWarning();
+    addHTMLToDisplayArea(productCards)
+})
+
+function handleCurrentDeleteModal(currentproductID) {
+    selectedCardID = currentproductID;
 }
 
 function handleCurrentViewMore(currentproductID) {
-    window.location.href = `./view.html?id=${currentproductID}`;
+    window.location.href = `./src/pages/view.html?id=${currentproductID}`;
 }
 
 document.getElementById("sort-toggle-btn").addEventListener("click", () => {

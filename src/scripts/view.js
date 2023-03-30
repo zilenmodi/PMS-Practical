@@ -22,7 +22,7 @@ if (currentID !== undefined && currentProduct.length !== 0) {
             <div class="price text-success mt-2">
                 <h5>$${currentProduct[0].price}</h5>
             </div>
-            <a href="./index.html" class="btn btn-primary mt-2">Go Back</a>
+            <a href="../../index.html" class="btn btn-primary mt-2">Go Back</a>
         </div>
     </div>
     </div>`
