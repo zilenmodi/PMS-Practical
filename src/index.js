@@ -102,6 +102,7 @@ editProductForm.addEventListener("submit", (e) => {
     addHTMLToDisplayArea(productCards)
 });
 
+
 function addHTMLToDisplayArea(products) {
     let contentArea = document.getElementById("allCardsDisplay");
     contentArea.innerHTML = "";
@@ -111,7 +112,7 @@ function addHTMLToDisplayArea(products) {
         }
         contentArea.innerHTML += `
         <div class="col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3">
-        <div class="card">
+        <div class="card card-div-box">
         <div class="card-image-box">
                             <img class="card-img"
                             src="${currentproduct?.image}"
@@ -121,7 +122,7 @@ function addHTMLToDisplayArea(products) {
             <div class="card-body">
                 <h4 class="card-title">${currentproduct?.productName}</h4>
                 <h6 class="card-subtitle mb-2 text-muted">PID: ${currentproduct._id}</h6>
-                <p class="card-text">
+                <p class="card-text card-text-box">
                 ${currentproduct?.description} </p>
                 <div class="buy d-flex justify-content-between align-items-center">
                     <div class="price text-success">
@@ -132,7 +133,7 @@ function addHTMLToDisplayArea(products) {
                 <div class="buy d-flex gap-3 align-items-center mt-3 justify-content-center">
                     <button type="button" class="btn btn-outline-primary text-nowrap" onclick="handleCurrentViewMore(${currentproduct?._id})">View more</button>
                     <button type="button" id="cardEditBtn-${currentproduct?._id}" data-bs-toggle="modal" data-bs-target="#editCardModal" class="btn btn-outline-success" onclick="handleCurrentEdit(${currentproduct?._id})">Edit</button>
-                    <button type="button" class="btn btn-outline-danger" onclick="handleCurrentDelete(${currentproduct?._id})">Delete</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteCardModal" onclick="handleCurrentDeleteModal(${currentproduct?._id})">Delete</button>
                 </div>
             </div>
         </div>
@@ -150,13 +151,15 @@ function handleCurrentEdit(currentproductID) {
     image = currentProduct[0].image;
 }
 
-function handleCurrentDelete(currentproductID) {
-    let currentProducts = productCards.filter((currCard) => currCard._id != currentproductID)
+function handleCurrentDeleteModal(currentproductID) {
+    document.getElementById("deleteCardModalSubmit").addEventListener('click', () => {
+        let currentProducts = productCards.filter((currCard) => currCard._id != currentproductID)
 
-    localStorage.setItem('productCards', JSON.stringify(currentProducts));
-    productCards = JSON.parse(localStorage.getItem('productCards'))
-    deleteWarning();
-    addHTMLToDisplayArea(productCards)
+        localStorage.setItem('productCards', JSON.stringify(currentProducts));
+        productCards = JSON.parse(localStorage.getItem('productCards'))
+        deleteWarning();
+        addHTMLToDisplayArea(productCards)
+    })
 }
 
 function handleCurrentViewMore(currentproductID) {
@@ -219,6 +222,18 @@ function handleSearchBar() {
     })
     addHTMLToDisplayArea(filteredProductCards)
 }
+
+function debounce(call_handleSearchBar, ms) {
+    let timer;
+    return () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            call_handleSearchBar()
+        }, ms)
+    }
+}
+
+const processChangeInput = debounce(handleSearchBar, 1000)
 
 function success() {
     Swal.fire({

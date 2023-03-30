@@ -21,7 +21,7 @@
                 <a class="navbar-brand text-nowrap h4" href="./index.html">Product Managament System</a>
                 <form class="d-flex">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
-                        oninput="handleSearchBar()" id="searchbar">
+                        oninput="processChangeInput()" id="searchbar">
                     <!-- <button class="btn btn-outline-success" type="submit">Search</button> -->
                 </form>
             </div>
@@ -84,12 +84,12 @@
                             <div class="mb-3">
                                 <label for="createNewModalPDes" class="form-label">Product Description</label>
                                 <textarea class="form-control" id="createNewModalPDes"
-                                    placeholder="Product Description..." rows="3" maxlength="150" required></textarea>
+                                    placeholder="Product Description..." rows="3" maxlength="300" required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="createNewModalPImg" class="form-label">Choose Image</label>
                                 <input type="file" class="form-control" id="createNewModalPImg"
-                                    placeholder="Product image..." required>
+                                    placeholder="Product image..." accept="image/*" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -128,12 +128,12 @@
                             <div class="mb-3">
                                 <label for="editCardModalPDes" class="form-label">Product Description</label>
                                 <textarea class="form-control" id="editCardModalPDes"
-                                    placeholder="Product Description..." rows="3" maxlength="150" required></textarea>
+                                    placeholder="Product Description..." rows="3" maxlength="300" required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="editCardModalPImg" class="form-label">Choose Image</label>
                                 <input type="file" class="form-control" id="editCardModalPImg"
-                                    placeholder="Product image...">
+                                    placeholder="Product image..." accept="image/*">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -146,7 +146,24 @@
             </div>
         </div>
 
-
+        <div class="modal" id="deleteCardModal" tabindex="-1" aria-labelledby="deleteCardModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteCardModalLabel">Delete Product</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>Are you sure?</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal"
+                            id="deleteCardModalSubmit">Sure</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="container mt-3 mb-3">
             <div id="allCardsDisplay" class="row g-3 justify-content-center justify-content-md-start">

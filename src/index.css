@@ -1,4 +1,4 @@
-.card {
+.card-div-box {
     height: 470px;
 }
 
@@ -12,7 +12,13 @@
     height: 100%;
 }
 
-.card-text {
+.card-text-box {
+    display: -webkit-box;
+    max-width: 400px;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
     min-height: 95px;
 }
 
@@ -41,11 +47,14 @@
 }
 
 .content-view-imagebox {
-    height: 300px;
-    width: 300px;
+    margin: 0 auto;
 }
 
 .content-view-imagebox img {
     height: 100%;
     width: 100%;
+    max-height: 400px;
+    min-height: 300px;
+    max-width: 500px;
+    object-fit: cover;
 }
