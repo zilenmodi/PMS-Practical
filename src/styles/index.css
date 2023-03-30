@@ -22,7 +22,6 @@
     min-height: 95px;
 }
 
-
 .dropdown-toggle-down::after {
     display: inline-block;
     margin-left: 0.255em;
